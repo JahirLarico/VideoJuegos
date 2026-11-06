@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class Interuptor_controller : MonoBehaviour
 {
+
+    // Pre_lab12 Backup
+
     [Header("Configuracion del interruptor")]
 
     [SerializeField] private KeyCode teclaInteraccion = KeyCode.E;
