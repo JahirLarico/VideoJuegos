@@ -23,12 +23,10 @@ public class Jugador_controller : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("El movimiento se está ejecutando");
-        // Obtener el movimiento del teclado
+
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        // Obtener las direcciones de movimiento según la cámara
         Vector3 adelante = camara != null
             ? camara.forward
             : transform.forward;
@@ -37,26 +35,22 @@ public class Jugador_controller : MonoBehaviour
             ? camara.right
             : transform.right;
 
-        // Evitar que la dirección de la cámara incline al jugador
         adelante.y = 0f;
         derecha.y = 0f;
 
         adelante.Normalize();
         derecha.Normalize();
 
-        // Calcular el movimiento horizontal
         Vector3 movimiento =
             derecha * horizontal + adelante * vertical;
 
         movimiento = Vector3.ClampMagnitude(movimiento, 1f);
 
-        // Aplicar una pequeña fuerza hacia abajo al tocar el suelo
         if (controlador.isGrounded && velocidadVertical.y < 0f)
         {
             velocidadVertical.y = -2f;
         }
 
-        // Saltar al pulsar la barra espaciadora
         if (controlador.isGrounded &&
             Input.GetKeyDown(KeyCode.Space))
         {
@@ -64,10 +58,8 @@ public class Jugador_controller : MonoBehaviour
                 Mathf.Sqrt(fuerzaSalto * -2f * gravedad);
         }
 
-        // Aplicar gravedad continuamente
         velocidadVertical.y += gravedad * Time.deltaTime;
 
-        // Mover al jugador horizontal y verticalmente
         Vector3 movimientoFinal =
             movimiento * velocidad + velocidadVertical;
 

@@ -33,19 +33,11 @@ public class Interuptor_controller : MonoBehaviour
         {
             objetoControlado.SetActive(estaEncendido);
         }
-        else
-        {
-            Debug.LogWarning("No has asignado el objeto que quieres controlar.");
-        }
 
         if (renderizadorNubes != null)
         {
             materialNubes = renderizadorNubes.material;
             ActualizarColorNubes();
-        }
-        else
-        {
-            Debug.LogWarning("No has asignado el Renderer de las nubes.");
         }
     }
 
@@ -87,11 +79,8 @@ public class Interuptor_controller : MonoBehaviour
             objetoControlado.SetActive(estaEncendido);
         }
 
-        // Alternar entre nubes blancas y arcoiris
         intensidadObjetivo = intensidadObjetivo == 0f ? 1f : 0f;
 
-        Debug.Log("Transformacion de nubes: " +
-            (intensidadObjetivo == 1f ? "Arcoiris" : "Blancas"));
     }
 
     private void ActualizarColorNubes()
