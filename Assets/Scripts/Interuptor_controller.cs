@@ -14,16 +14,8 @@ public class Interuptor_controller : MonoBehaviour
     [Header("Estado inicial")]
     [SerializeField] private bool empiezaEncendido = false;
 
-    [Header("Configuracion de colores de las nubes")]
-    [SerializeField] private Renderer renderizadorNubes;
-    [SerializeField] private float duracionCambioColor = 4f;
-    [SerializeField, Range(0f, 1f)] private float intensidadArcoiris = 0f;
-
     private bool jugadorCerca = false;
     private bool estaEncendido = false;
-
-    private float intensidadObjetivo = 0f;
-    private Material materialNubes;
 
     private void Start()
     {
@@ -33,11 +25,12 @@ public class Interuptor_controller : MonoBehaviour
         {
             objetoControlado.SetActive(estaEncendido);
         }
-
-        if (renderizadorNubes != null)
+        else
         {
-            materialNubes = renderizadorNubes.material;
-            ActualizarColorNubes();
+            Debug.LogWarning(
+                "No has asignado el objeto que quieres controlar.",
+                this
+            );
         }
     }
 
@@ -48,10 +41,14 @@ public class Interuptor_controller : MonoBehaviour
         if (jugador == null)
             return;
 
-        Vector3 direccionJugador = jugador.transform.position - transform.position;
+        Vector3 direccionJugador =
+            jugador.transform.position - transform.position;
 
         bool estaDelante =
-            Vector3.Dot(transform.forward, direccionJugador.normalized) > 0;
+            Vector3.Dot(
+                transform.forward,
+                direccionJugador.normalized
+            ) > 0f;
 
         float distancia = direccionJugador.magnitude;
 
@@ -61,58 +58,25 @@ public class Interuptor_controller : MonoBehaviour
         {
             CambiarEstado();
         }
-
-        intensidadArcoiris = Mathf.MoveTowards(
-            intensidadArcoiris,
-            intensidadObjetivo,
-            Time.deltaTime / Mathf.Max(0.01f, duracionCambioColor)
-        );
-
-        ActualizarColorNubes();
     }
 
     private void CambiarEstado()
     {
-        if (objetoControlado != null)
-        {
-            estaEncendido = !estaEncendido;
-            objetoControlado.SetActive(estaEncendido);
-        }
-
-        intensidadObjetivo = intensidadObjetivo == 0f ? 1f : 0f;
-
-    }
-
-    private void ActualizarColorNubes()
-    {
-        if (materialNubes == null)
+        if (objetoControlado == null)
             return;
 
-        materialNubes.SetFloat(
-            "_Brillo_arcoiris",
-            intensidadArcoiris
-        );
-    }
+        estaEncendido = !estaEncendido;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag(tagJugador))
-        {
-            jugadorCerca = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag(tagJugador))
-        {
-            jugadorCerca = false;
-        }
+        objetoControlado.SetActive(estaEncendido);
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, rangoInteraccion);
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            rangoInteraccion
+        );
     }
 }
