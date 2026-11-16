@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class Pildoras_controller : MonoBehaviour
@@ -11,17 +12,25 @@ public class Pildoras_controller : MonoBehaviour
     [SerializeField, Range(0f, 1f)]
     private float intensidadArcoirisObjetivo = 1f;
 
-    [Header("Configuracion de la luz")]
+    [Header("Configuracion de la luz principal")]
     [SerializeField] private Light luzEscena;
 
     [SerializeField] private Color colorLuzObjetivo = Color.white;
-
-    [SerializeField] private float intensidadLuzObjetivo = 2f;
+    [SerializeField] private float intensidadLuzObjetivo = 0.2f;
 
     [SerializeField] private float rangoLuzObjetivo = 10f;
 
     [SerializeField, Range(1f, 179f)]
     private float anguloSpotObjetivo = 60f;
+
+    [Header("Iluminacion ambiental")]
+    [SerializeField]
+    private Color colorAmbientalObjetivo =
+        new Color(0.06f, 0.08f, 0.15f);
+
+    [Header("Skybox")]
+    [SerializeField] private bool modificarExposicionSkybox = false;
+    [SerializeField] private float exposicionSkyboxObjetivo = 0.3f;
 
     [Header("Transicion de los efectos")]
     [SerializeField] private float duracionTransicion = 4f;
@@ -39,7 +48,14 @@ public class Pildoras_controller : MonoBehaviour
     private float rangoLuzInicial;
     private float anguloSpotInicial;
 
+    private Color colorAmbientalInicial;
+
+    private Material skyboxMaterial;
+    private float exposicionSkyboxInicial;
+
     private bool efectoActivado = false;
+
+    private float tiempoInicio;
 
     private void Start()
     {
@@ -57,12 +73,28 @@ public class Pildoras_controller : MonoBehaviour
         if (luzEscena != null)
         {
             colorLuzInicial = luzEscena.color;
-
             intensidadLuzInicial = luzEscena.intensity;
-
             rangoLuzInicial = luzEscena.range;
-
             anguloSpotInicial = luzEscena.spotAngle;
+        }
+
+        colorAmbientalInicial = RenderSettings.ambientLight;
+
+        if (RenderSettings.skybox != null)
+        {
+            skyboxMaterial = new Material(RenderSettings.skybox);
+
+            if (skyboxMaterial.HasProperty("_Exposure"))
+            {
+                exposicionSkyboxInicial =
+                    skyboxMaterial.GetFloat("_Exposure");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "El Skybox no tiene una propiedad _Exposure."
+                );
+            }
         }
     }
 
@@ -71,15 +103,14 @@ public class Pildoras_controller : MonoBehaviour
         if (!efectoActivado)
             return;
 
-        float velocidad = Time.deltaTime /
-            Mathf.Max(0.01f, duracionTransicion);
+        float progreso = ObtenerProgreso();
 
         if (materialNubes != null)
         {
-            intensidadArcoirisActual = Mathf.MoveTowards(
-                intensidadArcoirisActual,
+            intensidadArcoirisActual = Mathf.Lerp(
+                intensidadArcoirisInicial,
                 intensidadArcoirisObjetivo,
-                velocidad
+                progreso
             );
 
             materialNubes.SetFloat(
@@ -93,13 +124,13 @@ public class Pildoras_controller : MonoBehaviour
             luzEscena.color = Color.Lerp(
                 colorLuzInicial,
                 colorLuzObjetivo,
-                ObtenerProgreso()
+                progreso
             );
 
             luzEscena.intensity = Mathf.Lerp(
                 intensidadLuzInicial,
                 intensidadLuzObjetivo,
-                ObtenerProgreso()
+                progreso
             );
 
             if (luzEscena.type == LightType.Point ||
@@ -108,7 +139,7 @@ public class Pildoras_controller : MonoBehaviour
                 luzEscena.range = Mathf.Lerp(
                     rangoLuzInicial,
                     rangoLuzObjetivo,
-                    ObtenerProgreso()
+                    progreso
                 );
             }
 
@@ -117,10 +148,32 @@ public class Pildoras_controller : MonoBehaviour
                 luzEscena.spotAngle = Mathf.Lerp(
                     anguloSpotInicial,
                     anguloSpotObjetivo,
-                    ObtenerProgreso()
+                    progreso
                 );
             }
         }
+
+        RenderSettings.ambientLight = Color.Lerp(
+            colorAmbientalInicial,
+            colorAmbientalObjetivo,
+            progreso
+        );
+
+        if (modificarExposicionSkybox &&
+            skyboxMaterial != null &&
+            RenderSettings.skybox.HasProperty("_Exposure"))
+        {
+            RenderSettings.skybox.SetFloat(
+                "_Exposure",
+                Mathf.Lerp(
+                    exposicionSkyboxInicial,
+                    exposicionSkyboxObjetivo,
+                    progreso
+                )
+            );
+        }
+
+        DynamicGI.UpdateEnvironment();
     }
 
     private float ObtenerProgreso()
@@ -132,8 +185,6 @@ public class Pildoras_controller : MonoBehaviour
             (Time.time - tiempoInicio) / duracionTransicion
         );
     }
-
-    private float tiempoInicio;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -148,6 +199,9 @@ public class Pildoras_controller : MonoBehaviour
 
     public void ActivarEfecto()
     {
+        if (efectoActivado)
+            return;
+
         efectoActivado = true;
 
         tiempoInicio = Time.time;
