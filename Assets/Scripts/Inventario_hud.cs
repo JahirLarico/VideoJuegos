@@ -67,7 +67,6 @@ public class Inventario_hud : MonoBehaviour
             SeleccionarRanura(2);
         }
 
-        // Ejecutar la accion del objeto seleccionado.
         if (Input.GetKeyDown(teclaUsarObjeto))
         {
             UsarObjetoSeleccionado();

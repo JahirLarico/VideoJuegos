@@ -89,12 +89,6 @@ public class Pildoras_controller : MonoBehaviour
                 exposicionSkyboxInicial =
                     skyboxMaterial.GetFloat("_Exposure");
             }
-            else
-            {
-                Debug.LogWarning(
-                    "El Skybox no tiene una propiedad _Exposure."
-                );
-            }
         }
     }
 

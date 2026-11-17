@@ -25,13 +25,6 @@ public class Interuptor_controller : MonoBehaviour
         {
             objetoControlado.SetActive(estaEncendido);
         }
-        else
-        {
-            Debug.LogWarning(
-                "No has asignado el objeto que quieres controlar.",
-                this
-            );
-        }
     }
 
     private void Update()
