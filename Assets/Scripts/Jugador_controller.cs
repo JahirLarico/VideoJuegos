@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -23,7 +24,6 @@ public class Jugador_controller : MonoBehaviour
 
     void Update()
     {
-
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
@@ -45,6 +45,7 @@ public class Jugador_controller : MonoBehaviour
             derecha * horizontal + adelante * vertical;
 
         movimiento = Vector3.ClampMagnitude(movimiento, 1f);
+
 
         if (controlador.isGrounded && velocidadVertical.y < 0f)
         {
