@@ -4,9 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class Jugador_controller : MonoBehaviour
 {
+    [Header("Movimiento")]
     public float velocidad = 5f;
     public float gravedad = -9.81f;
     public float fuerzaSalto = 2f;
+
+    [Header("Correr")]
+    public KeyCode teclaCorrer = KeyCode.LeftShift;
+    public float multiplicadorCorrer = 2.0f;
 
     private CharacterController controlador;
     private Vector3 velocidadVertical;
@@ -46,6 +51,11 @@ public class Jugador_controller : MonoBehaviour
 
         movimiento = Vector3.ClampMagnitude(movimiento, 1f);
 
+        bool estaCorriendo = Input.GetKey(teclaCorrer);
+
+        float velocidadActual = estaCorriendo
+            ? velocidad * multiplicadorCorrer
+            : velocidad;
 
         if (controlador.isGrounded && velocidadVertical.y < 0f)
         {
@@ -62,7 +72,7 @@ public class Jugador_controller : MonoBehaviour
         velocidadVertical.y += gravedad * Time.deltaTime;
 
         Vector3 movimientoFinal =
-            movimiento * velocidad + velocidadVertical;
+            movimiento * velocidadActual + velocidadVertical;
 
         controlador.Move(movimientoFinal * Time.deltaTime);
     }
