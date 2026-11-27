@@ -32,6 +32,9 @@ public class Jugador_controller : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
+        if (Dialogo_controller.ControlesBloqueados)
+            return;
+
         Vector3 adelante = camara != null
             ? camara.forward
             : transform.forward;

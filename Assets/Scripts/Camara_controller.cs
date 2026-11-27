@@ -24,6 +24,9 @@ public class Camara_controller : MonoBehaviour
 
     void Update()
     {
+        if (Dialogo_controller.ControlesBloqueados)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.lockState = CursorLockMode.None;

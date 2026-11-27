@@ -31,7 +31,6 @@ public class Dialogo_controller : MonoBehaviour
 
     [Header("Configuracion")]
     [SerializeField] private KeyCode teclaContinuar = KeyCode.Y;
-
     [SerializeField] private float velocidadTexto = 0.04f;
 
     private LineaDialogo[] dialogos;
@@ -44,10 +43,14 @@ public class Dialogo_controller : MonoBehaviour
 
     public bool DialogoActivo => dialogoActivo;
 
+    public static bool ControlesBloqueados { get; private set; }
+
     private void Start()
     {
         if (panelDialogo != null)
             panelDialogo.SetActive(false);
+
+        ControlesBloqueados = false;
     }
 
     private void Update()
@@ -81,7 +84,10 @@ public class Dialogo_controller : MonoBehaviour
         indiceActual = 0;
         dialogoActivo = true;
 
-        panelDialogo.SetActive(true);
+        ControlesBloqueados = true;
+
+        if (panelDialogo != null)
+            panelDialogo.SetActive(true);
 
         MostrarDialogoActual();
 
@@ -178,6 +184,8 @@ public class Dialogo_controller : MonoBehaviour
 
         escribiendo = false;
         dialogoActivo = false;
+
+        ControlesBloqueados = false;
 
         if (panelDialogo != null)
             panelDialogo.SetActive(false);

@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class Pildoras_controller : MonoBehaviour
 {
-    [Header("Configuracion del jugador")]
-    [SerializeField] private string tagJugador = "Player";
-
     [Header("Configuracion de las nubes")]
     [SerializeField] private Renderer renderizadorNubes;
 
@@ -34,9 +31,6 @@ public class Pildoras_controller : MonoBehaviour
 
     [Header("Transicion de los efectos")]
     [SerializeField] private float duracionTransicion = 4f;
-
-    [Header("Recogida de la pildora")]
-    [SerializeField] private bool destruirAlRecoger = true;
 
     private Material materialNubes;
 
@@ -180,14 +174,8 @@ public class Pildoras_controller : MonoBehaviour
         );
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void UsarPildora()
     {
-        if (efectoActivado)
-            return;
-
-        if (!other.CompareTag(tagJugador))
-            return;
-
         ActivarEfecto();
     }
 
@@ -197,12 +185,6 @@ public class Pildoras_controller : MonoBehaviour
             return;
 
         efectoActivado = true;
-
         tiempoInicio = Time.time;
-
-        if (destruirAlRecoger)
-        {
-            Destroy(gameObject);
-        }
     }
 }
